@@ -248,8 +248,7 @@ def all(network: int = None,
     else:
         networks = [network]
     paths = [
-        f'data/{network:02}/{nswap_perc:+04.0f}/'
-        for nswap_perc in np.arange(-100, 101, 20)
+        f'/data/s1620444/{network:02}/'
         for network in networks
     ]
 
@@ -466,15 +465,14 @@ def check():
     iterator = list(
         itertools.product(
             [network for network in np.arange(1, 31)
-             if network not in [15, 17, 26, 27]],
-            np.arange(-100, 101, 20)
+             if network not in [15, 17, 26, 27]]
         )
     )
     result = dict()
-    for n, nswap_perc in iterator:
-        dir = f'data/{n:02}/{nswap_perc:+04.0f}/features'
+    for n in iterator:
+        dir = f'/data/s1620444/{n:02}/features'
         if os.path.isdir(dir):
-            result[(n, nswap_perc)] = len(list(os.scandir(dir)))
+            result[(n)] = len(list(os.scandir(dir)))
     print(result)
 
 

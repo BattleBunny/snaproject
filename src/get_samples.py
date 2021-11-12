@@ -35,7 +35,6 @@ def check_common_neighbor(G, u, v):
 
 @app.command()
 def single(network: int,
-           nswap_perc: int,
            cutoff: int = 2,
            sample_size: int = 10_000,
            seed: int = 42,
@@ -45,7 +44,6 @@ def single(network: int,
     
     Arguments:
         - network
-        - nswap_perc
         - cutoff (10_000): Get only pairs of nodes with at most this distance.
         - sample_size (default 10_000): 
             Get this number of positives and negatives.
@@ -54,7 +52,7 @@ def single(network: int,
     """
     if not verbose:
         logger.setLevel(logging.INFO)
-    directory = f'data/{network:02}/{nswap_perc:+04.0f}'
+    directory = f'/data/s1620444/{network:02}'
     assert os.path.isdir(directory), f"{directory=} does not exist"
     
     filepath_in = os.path.join(directory, 'edgelist.pkl')
@@ -131,23 +129,16 @@ def all(n_jobs: int = -1,
         shuffle: bool = True,
         seed: int = 42,
         sample_size: int = 10_000):
-    iterations = [(network, nswap_perc, None if nswap_perc == 0 else method)
-                  for network in np.arange(1, 31)
-                  for nswap_perc in np.arange(-100, 101, 20)
-                  for method in ['a', 'b']
-                  if not (nswap_perc == 0 and method == 'b')]
-    iterator = list(iterations)
+    iterations = np.arange(1, 31)
     if shuffle:
         random.seed(seed)
-        random.shuffle(iterator)
+        random.shuffle(iterations)
     ProgressParallel(n_jobs=n_jobs, total=len(iterations))(
         delayed(single)(
             network=network,
-            nswap_perc=nswap_perc,
-            method=method,
             sample_size=sample_size,
             verbose=verbose)
-        for network, nswap_perc, method in iterations
+        for network in iterations
     )
 
 
@@ -156,13 +147,12 @@ def check():
     iterator = list(
         itertools.product(
             [network for network in np.arange(1, 31)
-             if network not in [15, 17, 26, 27]],
-            np.arange(-100, 101, 20)
+             if network not in [15, 17, 26, 27]]
         )
     )
-    for n, nswap_perc in iterator:
-        if not os.path.isfile(f'data/{n:02}/{nswap_perc:+04.0f}/samples.pkl'):
-            print(n, nswap_perc)
+    for n in iterator:
+        if not os.path.isfile(f'/data/s1620444/{n:02}):
+            print(n)
 
 
 if __name__ == '__main__':

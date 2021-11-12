@@ -12,7 +12,7 @@ app = typer.Typer()
 
 @app.command()
 def single(network_index: int, nswap_perc: int, verbose: bool = False):
-  directory = f'data/{network_index:02}/{nswap_perc:+04.0f}'
+  directory = f'/data/s1620444/{network_index:02}/{nswap_perc:+04.0f}'
   filepath_in = os.path.join(directory, 'graph.pkl')
   filepath_out = os.path.join(directory, 'edgelist.pkl')
   if os.path.isfile(filepath_in) and not os.path.isfile(filepath_out):
@@ -52,7 +52,7 @@ def check():
         )
     )
     for n, nswap_perc in iterator:
-        if not os.path.isfile(f'data/{n:02}/{nswap_perc:+04.0f}/edgelist.pkl'):
+        if not os.path.isfile(f'/data/s1620444/{n:02}/{nswap_perc:+04.0f}/edgelist.pkl'):
             print(n, nswap_perc)
 
 

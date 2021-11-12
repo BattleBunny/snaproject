@@ -83,12 +83,11 @@ def predict(directory: str,
 
 @app.command()
 def single(network: int, 
-           nswap_perc: int, 
            clf: str = 'LogisticRegression',
            feature_set: str = 'II-A',
            random_state: int = 42,
            n_jobs: int = -1):
-    directory = f'data/{network:02}/{nswap_perc:+04.0f}'
+    directory = f'/data/s1620444/{network:02}/'
     os.makedirs(directory, exist_ok=True)
     filepath_out = os.path.join(directory, 
                                 'properties', 
@@ -103,7 +102,7 @@ def single(network: int,
   
 @app.command()
 def all(network: int = None,
-        n_swap_perc: int = None,
+
         clf: str = 'LogisticRegression',
         n_jobs: int = -1, 
         feature_set: str = 'II-A',
@@ -114,24 +113,17 @@ def all(network: int = None,
                     if network not in [15, 17, 26, 27]]
     else:
         networks = [network]
-    if n_swap_perc is None:
-        nswap_percs = np.arange(-100, 101, 20)
-    else:
-        nswap_percs = [n_swap_perc]
-    iterations = [(network, nswap_perc)
-                  for network in networks
-                  for nswap_perc in nswap_percs]
     if shuffle:
         random.seed(seed)
-        random.shuffle(iterations)
+        random.shuffle(networks)
     if n_jobs == -1 or n_jobs > 1:
-        ProgressParallel(n_jobs=n_jobs, total=len(iterations))(
-            delayed(single)(network, nswap_perc, clf, feature_set) 
-            for network, nswap_perc in iterations
+        ProgressParallel(n_jobs=n_jobs, total=len(networks))(
+            delayed(single)(network, clf, feature_set) 
+            for network in networks
         )          
     else:
-        for network, nswap_perc in tqdm(iterations):
-            single(network, nswap_perc, clf, feature_set)
+        for network in tqdm(networks):
+            single(network, clf, feature_set)
         
 if __name__ == '__main__':
     app()
