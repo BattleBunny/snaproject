@@ -40,6 +40,7 @@ def predict(directory: str,
     assert os.path.isdir(directory), f'missing {directory=}'
     feature_dir = os.path.join(directory, 'features')
     if not os.path.isdir(feature_dir):
+        print("returning none!")
         return None
     samples_filepath = os.path.join(directory, 'samples.pkl')
     assert os.path.isfile(samples_filepath), f'missing {samples_filepath=}'
@@ -87,12 +88,13 @@ def single(network: int,
            feature_set: str = 'II-A',
            random_state: int = 42,
            n_jobs: int = -1):
-    directory = f'/data/s1620444/{network:02}/'
+    directory = f'/data/s1620444/{network:02}'
     os.makedirs(directory, exist_ok=True)
     filepath_out = os.path.join(directory, 
                                 'properties', 
                                 f'{feature_set}_{clf}.float')
     if os.path.isfile(filepath_out):
+        print("return")
         return
     auc = predict(directory, feature_set, clf, random_state, n_jobs)
     if auc is not None:

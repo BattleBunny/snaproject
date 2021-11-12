@@ -151,7 +151,7 @@ def check():
         )
     )
     for n in iterator:
-        if not os.path.isfile(f'/data/s1620444/{n:02}):
+        if not os.path.isfile(f'/data/s1620444/{n:02}'):
             print(n)
 
 

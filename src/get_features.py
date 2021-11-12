@@ -385,6 +385,7 @@ def single(path: str, n_jobs: int = -1, verbose=True):
     if (not os.path.isdir(path) or
         not os.path.isfile(edgelist_file) or
             not os.path.isfile(samples_file)):
+        print("RETURN")
         return
 
     features_dir = os.path.join(path, 'features')

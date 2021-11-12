@@ -24,11 +24,10 @@ def get_network(network_index: int, multi_edge=True, edge_attr='datetime'):
 
 @app.command()
 def single(network: int, 
-           nswap_perc: int, 
            average_clustering: bool = True,
            diameter: bool = True,
            verbose: bool = True):
-    directory = f'data/{network:02}/{nswap_perc:+04.0f}'
+    directory = f'data/{network:02}'
     out_directory = os.path.join(directory, 'properties')
     filepath_in = os.path.join(directory, 'graph.pkl')
     files = ['assortativity.float', 'connected_pairs.int', 'edges.int', 
@@ -52,16 +51,12 @@ def single(network: int,
 
     if not verbose:
         logger.setLevel(logging.INFO)
-    if nswap_perc == 0:
-        logger.debug(f'Get {network=:02}')
-        G = get_network(network, edge_attr=None)
-    else:
-        try:
-            logger.debug(f'Get network {filepath_in=}')
-            G = joblib.load(filepath_in)
-        except:
-            tqdm.write(f'{network=}, {nswap_perc=} failed!')
-            return
+    try:
+        logger.debug(f'Get network {filepath_in=}')
+        G = joblib.load(filepath_in)
+    except:
+        tqdm.write(f'{network=} failed!')
+        return
     out_directory = os.path.join(directory, 'properties')
     os.makedirs(out_directory, exist_ok=True)
     
@@ -137,7 +132,6 @@ def single(network: int,
 @app.command()
 def all(network: int = None, 
         n_jobs: int = -1, 
-        nswap_perc: int = None,
         average_clustering: bool = True,
         diameter: bool = True,
         shuffle: bool = True, 
@@ -149,31 +143,20 @@ def all(network: int = None,
                     for network in np.arange(1, 31) 
                     if network not in [15, 17, 26, 27]]
     else:
-        networks = [network]
-        
-    # nswap_perc selection
-    if nswap_perc is None:
-        nswap_percs = np.arange(-100, 101, 20)
-    else:
-        nswap_percs = [nswap_perc]
-        
-    iterations = [(network, nswap_perc)
-                  for network in networks
-                  for nswap_perc in nswap_percs]
+        networks = [network]        
     
     if shuffle:
         random.seed(seed)
-        random.shuffle(iterations)
-    if multiprocessing.cpu_count() > len(iterations):
-        n_jobs = len(iterations)
-    ProgressParallel(n_jobs=n_jobs, total=len(iterations))(
+        random.shuffle(networks)
+    if multiprocessing.cpu_count() > len(networks):
+        n_jobs = len(networks)
+    ProgressParallel(n_jobs=n_jobs, total=len(networks))(
         delayed(single)(
             network=network, 
-            nswap_perc=nswap_perc,
             average_clustering=average_clustering,
             diameter=diameter,
             verbose=verbose
-        ) for network, nswap_perc in iterations
+        ) for network in networks
     )
 
 if __name__ == '__main__':
