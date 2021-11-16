@@ -94,7 +94,6 @@ def single(network: int,
                                 'properties', 
                                 f'{feature_set}_{clf}.float')
     if os.path.isfile(filepath_out):
-        print("return")
         return
     auc = predict(directory, feature_set, clf, random_state, n_jobs)
     if auc is not None:

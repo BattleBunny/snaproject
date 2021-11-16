@@ -13,7 +13,7 @@ app = typer.Typer()
 
 def get_network(network_index: int, multi_edge=True, edge_attr='datetime'):
     edgelist = (
-        pd.read_pickle(f'data/{network_index:02}/+000/edgelist.pkl')
+        pd.read_pickle(f'/data/s1620444/{network_index:02}/+000/edgelist.pkl')
         .query("source != target")
     )
     if multi_edge:
@@ -27,7 +27,7 @@ def single(network: int,
            average_clustering: bool = True,
            diameter: bool = True,
            verbose: bool = True):
-    directory = f'data/{network:02}'
+    directory = f'/data/s1620444/{network:02}'
     out_directory = os.path.join(directory, 'properties')
     filepath_in = os.path.join(directory, 'graph.pkl')
     files = ['assortativity.float', 'connected_pairs.int', 'edges.int', 

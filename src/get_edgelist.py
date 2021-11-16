@@ -290,6 +290,8 @@ def single(index_network: int,
     split_fraction can be provided, which marks how many percent of edges should
     be in maturing phase and how many in probing phase.
     """
+    # discrete event indices, size ascending
+    # 18, 20, 21, 9, 4,8, 24,16, 11,10
     os.makedirs(os.path.dirname(edgelist_path), exist_ok=True)
     konect_urls = {
         1: 'http://konect.cc/files/download.tsv.dblp_coauthor.tar.bz2',
@@ -361,6 +363,17 @@ def single(index_network: int,
     edgelist = add_phase(edgelist, split_fraction, t_min, t_split, t_max)
 
     edgelist.to_pickle(edgelist_path)
+
+@app.command()
+def discrete():
+    """"Get all discrete networks """
+    discrete_ids = [18, 20, 21, 9, 4,8, 24,16, 11,10]
+    for i in discrete_ids:
+        try:
+            single(network_index=i)
+        except:
+            logger.debug(f"COULD NOT EXTRACT NETWORK ID {i}")
+
 
 
 @app.command()
