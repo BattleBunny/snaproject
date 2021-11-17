@@ -28,21 +28,24 @@ def predict(directory: str,
             clf='LogisticRegression',
             random_state=42,
             n_jobs=-1):
-    if feature_set == 'I':
+    if feature_set == 'I': #static feature set
         def check(x): return x in [
             'aa.npy', 'cn.npy', 'jc.npy', 'pa.npy', 'sp.npy']
-    elif feature_set == 'II-A':
+    elif feature_set == 'II-A': #temporal features WITH past event aggregation
         def check(x): return not x.startswith('na')
-    elif feature_set == 'II-B':
+    elif feature_set == 'II-B': #temporal features WIHTOUT past even aggregation
         def check(x): return (
             (x in ['aa.npy', 'cn.npy', 'jc.npy',
              'pa.npy', 'sp.npy'] or ('_q100' in x))
             and not x.startswith('na')
         )
-    elif feature_set == 'III':
+    elif feature_set == 'III-A': #node activity features WITH past event aggregation
         def check(x): return (
             x.startswith('na') and not 'm5' in x
         )
+    elif feature_set == 'III-B': #node activity features WITHOUT past event aggregation
+        def check(x): return (
+            (x.startswith('na') and not 'm5' in x) or (x.startswith('na') and (not 'm5' in x) and ('_q100' in x)))
     else:
         raise Exception(f'{feature_set=} not recognized')
 

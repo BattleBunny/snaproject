@@ -7,7 +7,8 @@
 
 ========= ELISE AAN JULIA ============
 
-
+* Ik heb de netwerken gecheckt!! Ze kloppen allemaal en staan inderdaad 
+	ook van klein naar groot
 
 ========= ALGEMEEN =============
 * DONE zorgen dat je alle featuresets krijgt
