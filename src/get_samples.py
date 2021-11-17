@@ -1,3 +1,4 @@
+import warnings
 import logging
 import random
 import os
@@ -13,6 +14,9 @@ from .logger import logger
 from .progress_parallel import ProgressParallel, delayed
 
 app = typer.Typer()
+
+# DANGER ZONE
+warnings.filterwarnings("ignore")
 
 
 def check_common_neighbor(G, u, v):
@@ -41,7 +45,7 @@ def single(network: int,
            verbose: bool = True):
     """Get positive and negative samples (i.e. pairs of nodes) for the temporal 
     link prediction problem.
-    
+
     Arguments:
         - network
         - cutoff (10_000): Get only pairs of nodes with at most this distance.
@@ -54,7 +58,7 @@ def single(network: int,
         logger.setLevel(logging.INFO)
     directory = f'/data/s1620444/{network:02}'
     assert os.path.isdir(directory), f"{directory=} does not exist"
-    
+
     filepath_in = os.path.join(directory, 'edgelist.pkl')
     filepath_out = os.path.join(directory, 'samples.pkl')
 
@@ -64,10 +68,9 @@ def single(network: int,
     assert cutoff == 2, "Not implement for any other cutoff value than 2."
 
     edgelist = pd.read_pickle(filepath_in)
-    
-    assert {'source', 'target', 'phase'}.issubset(set(edgelist.columns))
-    edgelist.query("source != target", inplace=True) # Do not allow selfloops
 
+    assert {'source', 'target', 'phase'}.issubset(set(edgelist.columns))
+    edgelist.query("source != target", inplace=True)  # Do not allow selfloops
 
     edgelist_mature = edgelist.query("phase == 'mature'")[['source', 'target']]
     graph_mature = nx.from_pandas_edgelist(edgelist_mature)
@@ -121,6 +124,16 @@ def single(network: int,
         [pd.Series(False, index=negatives), pd.Series(True, index=positives)])  # type: ignore
 
     result.to_pickle(filepath_out)
+
+@app.command()
+def discrete():
+    """"Get samples for all discrete networks """
+    discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
+    for i in discrete_ids:
+        try:
+            single(network=i)
+        except:
+            logger.debug(f"COULD NOT GET SAMPLES FOR NETWORK ID {i}")
 
 
 @app.command()

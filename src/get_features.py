@@ -11,6 +11,10 @@ import typer
 from .logger import logger
 from .progress_parallel import ProgressParallel, delayed
 
+# DANGER ZONE
+import warnings
+warnings.filterwarnings("ignore")
+
 app = typer.Typer()
 
 # region STRATEGIES
@@ -41,7 +45,8 @@ def exp(x: pd.Series, lower_bound=.2):
 
 
 def sqrt(x: pd.Series, lower_bound=.2):
-    return _rescale(np.sqrt(_rescale(x.astype(int))), lower_bound=lower_bound) #type: ignore
+    # type: ignore
+    return _rescale(np.sqrt(_rescale(x.astype(int))), lower_bound=lower_bound)
 
 
 TIME_STRATEGIES = {'lin': lin, 'exp': exp, 'sqrt': sqrt}
@@ -60,9 +65,9 @@ AGGREGATION_STRATEGIES = {
 }
 
 NODEPAIR_STRATEGIES = {
-    'sum': sum, 
+    'sum': sum,
     'diff': lambda x: x[1]-x[0],
-    'max': max, 
+    'max': max,
     'min': min
 }
 # endregion
@@ -209,13 +214,14 @@ def pa_time_aware(edgelist_mature, instances, time_strategy,
     return scores
 # endregion
 
+
 @app.command()
-def all(network: int = None, 
+def all(network: int = None,
         network_from: int = 1,
         network_to: int = 31,
-        n_jobs: int = -1, 
+        n_jobs: int = -1,
         include_na: bool = True):
-    assert network is None or (network_from == 1 and network_to == 31) 
+    assert network is None or (network_from == 1 and network_to == 31)
 
     # WRAPPER
     def calculate_feature(feature_func, path, out_file, **kwargs):
@@ -243,7 +249,7 @@ def all(network: int = None,
         np.save(out_filepath, scores)
 
     if network is None:
-        networks = [network for network in np.arange(network_from, network_to) 
+        networks = [network for network in np.arange(network_from, network_to)
                     if not network in [15, 17, 26, 27]]
     else:
         networks = [network]
@@ -260,7 +266,7 @@ def all(network: int = None,
     # na
     if include_na:
         total = (len(paths)*len(TIME_STRATEGIES)*len(AGGREGATION_STRATEGIES) *
-                len(NODEPAIR_STRATEGIES))
+                 len(NODEPAIR_STRATEGIES))
         ProgressParallel(n_jobs=n_jobs, total=total, desc='na')(
             delayed(calculate_feature)(
                 feature_func=na,
@@ -350,9 +356,9 @@ def all(network: int = None,
     # pa_time_aware
     total = len(paths)*len(TIME_STRATEGIES)*len(AGGREGATION_STRATEGIES)
     ProgressParallel(
-        n_jobs=n_jobs, 
-        total=total, 
-        desc='pa time-aware', 
+        n_jobs=n_jobs,
+        total=total,
+        desc='pa time-aware',
         # pre_dispatch='1*n_jobs'
     )(
         delayed(calculate_feature)(
@@ -405,38 +411,38 @@ def single(path: str, n_jobs: int = -1, verbose=True):
                      leave=True,
                      n_jobs=n_jobs if n_jobs < total else total)(
         delayed(calculate_feature)(
-            function=func, 
-            out_filepath=os.path.join(features_dir, func_str + '.pkl'),
-            edgelist_mature=edgelist_mature, 
+            function=func,
+            out_filepath=os.path.join(features_dir, func_str),
+            edgelist_mature=edgelist_mature,
             instances=instances
         )
         for func_str, func in simple_funcs
     )
 
-    # NA
-    total = (len(TIME_STRATEGIES) *
-             len(AGGREGATION_STRATEGIES) *
-             len(NODEPAIR_STRATEGIES))
-    ProgressParallel(use_tqdm=verbose,
-                     total=total,
-                     desc='na features',
-                     leave=True,
-                     n_jobs=total if total < n_jobs else n_jobs)(
-        delayed(calculate_feature)(
-            function=na,
-            out_filepath=os.path.join(
-                features_dir,
-                f'na_{time_str}_{agg_str}_{nodepair_str}.pkl'
-            ),
-            edgelist_mature=edgelist_mature, instances=instances,
-            time_strategy=time_func,
-            aggregation_strategy=agg_func,
-            nodepair_strategy=nodepair_func
-        )
-        for time_str, time_func in TIME_STRATEGIES.items()
-        for agg_str, agg_func in AGGREGATION_STRATEGIES.items()
-        for nodepair_str, nodepair_func in NODEPAIR_STRATEGIES.items()
-    )
+    # # NA
+    # total = (len(TIME_STRATEGIES) *
+    #          len(AGGREGATION_STRATEGIES) *
+    #          len(NODEPAIR_STRATEGIES))
+    # ProgressParallel(use_tqdm=verbose,
+    #                  total=total,
+    #                  desc='na features',
+    #                  leave=True,
+    #                  n_jobs=total if total < n_jobs else n_jobs)(
+    #     delayed(calculate_feature)(
+    #         function=na,
+    #         out_filepath=os.path.join(
+    #             features_dir,
+    #             f'na_{time_str}_{agg_str}_{nodepair_str}'
+    #         ),
+    #         edgelist_mature=edgelist_mature, instances=instances,
+    #         time_strategy=time_func,
+    #         aggregation_strategy=agg_func,
+    #         nodepair_strategy=nodepair_func
+    #     )
+    #     for time_str, time_func in TIME_STRATEGIES.items()
+    #     for agg_str, agg_func in AGGREGATION_STRATEGIES.items()
+    #     for nodepair_str, nodepair_func in NODEPAIR_STRATEGIES.items()
+    # )
 
     # Time aware functions
     time_aware_funcs = [('aa', aa_time_aware),
@@ -460,6 +466,18 @@ def single(path: str, n_jobs: int = -1, verbose=True):
         for agg_str, agg_func in AGGREGATION_STRATEGIES.items()
         for func_str, func in time_aware_funcs
     )
+
+
+@app.command()
+def discrete():
+    """"Get all features of all discrete networks """
+    discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
+    for i in discrete_ids:
+        try:
+            single(path=f"/data/s1620444/{i:02}")
+        except:
+            logger.debug(f"COULD NOT EXTRACT FEATURES NETWORK ID {i}")
+
 
 @app.command()
 def check():

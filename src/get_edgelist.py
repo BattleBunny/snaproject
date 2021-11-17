@@ -10,6 +10,10 @@ import typer
 
 from .logger import logger
 
+# DANGER ZONE
+import warnings
+warnings.filterwarnings("ignore")
+
 app = typer.Typer()
 
 
@@ -73,11 +77,11 @@ def extract_tar(tar_file: str, output_path: str) -> None:
 def from_konect(url: str, *, temp_path: str) -> pd.DataFrame:
     """Download and extract the KONECT dataset. Store extracted files in path. If
     the temporary files are already present in path, the file is not again
-    downloaded or extracted. The final edgelist, which is an pd.DataFrame with 
+    downloaded or extracted. The final edgelist, which is an pd.DataFrame with
     columns 'source', 'target', 'datetime' is returned.
 
     Args:
-      url: The url pointing to KONECT download file. Usual format: 
+      url: The url pointing to KONECT download file. Usual format:
         'http://konect.cc/files/download.*.tar.bz2'.
       temp_path: Optional; Store the extracted dataset in this directory.
     """
@@ -132,9 +136,9 @@ def from_konect(url: str, *, temp_path: str) -> pd.DataFrame:
 
 
 def from_aminer(url: str, temp_path: str) -> pd.DataFrame:
-    """Download and extract the AMiner dataset. Store extracted files in 
-    temp_path. If the temporary files are already present in path, the file is not 
-    again downloaded or extracted. The final edgelist, which is an pd.DataFrame with 
+    """Download and extract the AMiner dataset. Store extracted files in
+    temp_path. If the temporary files are already present in path, the file is not
+    again downloaded or extracted. The final edgelist, which is an pd.DataFrame with
     columns 'source', 'target', 'datetime' is returned.
 
     Args:
@@ -176,9 +180,9 @@ def from_aminer(url: str, temp_path: str) -> pd.DataFrame:
 
 
 def email_EU(url: str, temp_path: str) -> pd.DataFrame:
-    """Download and extract the email EU dataset. Store extracted files in 
-    temp_path. If the temporary files are already present in path, the file is not 
-    again downloaded or extracted. The final edgelist, which is an pd.DataFrame with 
+    """Download and extract the email EU dataset. Store extracted files in
+    temp_path. If the temporary files are already present in path, the file is not
+    again downloaded or extracted. The final edgelist, which is an pd.DataFrame with
     columns 'source', 'target', 'datetime' is returned.
 
     Args:
@@ -204,9 +208,9 @@ def email_EU(url: str, temp_path: str) -> pd.DataFrame:
 
 
 def reddit(url: str, temp_path: str) -> pd.DataFrame:
-    """Download and extract the reddit dataset. Store extracted files in 
-    temp_path. If the temporary files are already present in path, the file is not 
-    again downloaded or extracted. The final edgelist, which is an pd.DataFrame with 
+    """Download and extract the reddit dataset. Store extracted files in
+    temp_path. If the temporary files are already present in path, the file is not
+    again downloaded or extracted. The final edgelist, which is an pd.DataFrame with
     columns 'source', 'target', 'datetime' is returned.
 
     Args:
@@ -237,11 +241,11 @@ def add_phase(edgelist, split_fraction=2/3,
               t_min=None, t_split=None, t_max=None):
     """Add column to edgelist indicating whether an edge belongs to the mature
     or probe phase.
-    
+
     Arguments:
     edgelist: pd.DataFrame containing source, target and datetime columns
     t_min, optional: Edges before this date are ignored.
-    t_split, optional: 
+    t_split, optional:
         Edges before this date belong to mature and after to probe.
     t_max, optional: Edges after this date are ignored.
     """
@@ -260,9 +264,12 @@ def add_phase(edgelist, split_fraction=2/3,
         t_max = edgelist['datetime'].max()  # type: ignore
 
     # Checks
-    assert isinstance(t_min, pd.Timestamp), f"t_min should be pd.Timestamp but is {type(t_min)}"
-    assert isinstance(t_split, pd.Timestamp), f"t_split should be pd.Timestamp but is {type(t_split)}"
-    assert isinstance(t_max, pd.Timestamp), f"t_max should be pd.Timestamp but is {type(t_max)}"
+    assert isinstance(
+        t_min, pd.Timestamp), f"t_min should be pd.Timestamp but is {type(t_min)}"
+    assert isinstance(
+        t_split, pd.Timestamp), f"t_split should be pd.Timestamp but is {type(t_split)}"
+    assert isinstance(
+        t_max, pd.Timestamp), f"t_max should be pd.Timestamp but is {type(t_max)}"
 
     # Assign phase column
     edgelist.loc[lambda x: x['datetime'].between(t_min, t_split), 'phase'] = (  # type: ignore
@@ -278,11 +285,10 @@ def add_phase(edgelist, split_fraction=2/3,
 
 @app.command()
 def single(index_network: int,
-           edgelist_path: str,
            split_fraction=2/3,
            t_min=None, t_split=None, t_max=None):
     """
-    Download the network and store the result in edgelist_path. 
+    Download the network and store the result in edgelist_path.
     Then add a column `phase` which indicates whether an edge belong to 'mature',
     'probe' or None (np.NaN). t_min, t_split can be provided, which should be
     datetime objects used to mark the begin and end of the maturing phase.
@@ -292,7 +298,8 @@ def single(index_network: int,
     """
     # discrete event indices, size ascending
     # 18, 20, 21, 9, 4,8, 24,16, 11,10
-    os.makedirs(os.path.dirname(edgelist_path), exist_ok=True)
+    os.makedirs(os.path.dirname(
+        f"/data/s1620444/{index_network:02}"), exist_ok=True)
     konect_urls = {
         1: 'http://konect.cc/files/download.tsv.dblp_coauthor.tar.bz2',
         2: 'http://konect.cc/files/download.tsv.ca-cit-HepPh.tar.bz2',
@@ -364,19 +371,19 @@ def single(index_network: int,
 
     edgelist.to_pickle(edgelist_path)
 
-@app.command()
+
+@ app.command()
 def discrete():
     """"Get all discrete networks """
-    discrete_ids = [18, 20, 21, 9, 4,8, 24,16, 11,10]
+    discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
     for i in discrete_ids:
         try:
-            single(network_index=i)
+            single(index_network=i)
         except:
             logger.debug(f"COULD NOT EXTRACT NETWORK ID {i}")
 
 
-
-@app.command()
+@ app.command()
 def all():
     """Get all networks and store result in data/%%/edgelist.pkl"""
     for index_network in np.arange(1, 31):
@@ -384,7 +391,8 @@ def all():
             single(
                 index_network,
                 edgelist_path=f'/data/s1620444/{index_network:02}/edgelist.pkl',
-                t_min=pd.Timestamp(2001, 1, 10) if index_network == 16 else None
+                t_min=pd.Timestamp(
+                    2001, 1, 10) if index_network == 16 else None
             )
 
 

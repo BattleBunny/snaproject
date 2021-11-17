@@ -1,17 +1,54 @@
-* zorgen dat je alle featuresets krijgt
-* een discrete optie maken in elke file zodat je alle discrete networks kunt runnen
-    * DONE get edgelist --> hier staat ook lijst met ids
-    * get samples
-    * get features
-    * get stats
-    * get performance
+========= JULIA AAN ELISE ===========
+* kun je checken of de network id_s kloppen:
+    [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
+     - deze heb ik gekregen door networks.json te vergelijken
+    met tabel in paper
+    - bedoeling was van klein naar groot
 
-* om stats te runnen: convert edgelist to graph
-    * kijken welke package dat is
+========= ELISE AAN JULIA ============
+
+
+
+========= ALGEMEEN =============
+* DONE zorgen dat je alle featuresets krijgt
+    er zijn 2 aparte functies: 
+    discrete: om de 3 featuresets te berekenen van alle
+            discrete nets
+    DONE single_all_features: om van 1 net alle 3 featuresets te doen
+
+
+* een discrete optie maken in elke file zodat 
+  je alle discrete networks kunt runnen
+  TODO: TESTEN
+    * DONE TESTED get edgelist --> hier staat ook lijst met ids
+    * DONE TESTED -> 16 heeft 0 samples?? get samples
+    * DONE TESTED [lijkt te werken - 
+                    nog niet klaar maar wel al een 
+                    paar gedaan] get features
+    * DONE stats
+    * DONE get performance
+
+* DONE om stats te runnen: convert edgelist to graph
     
+* DONE fixen runtime error
+    ik heb het nu gewoon suppressed, 
+    zie # danger zone in de betreffende files
 
-* fixen runtime error
-    # dit script geeft bepaalde warnings, 
-    # deze oplossing gegeven: https://stackoverflow.com/questions/43393764/python-3-6-project-structure-leads-to-runtimewarning
-    # nu geen tijd voor gehad
-* fixen dat tekentjes enzo van tqdm progress bar niet goed gaan
+
+* TODO: voeg print/counter toe aan discrete 
+        get_features zodat je ziet welk netwerk
+        verwerkt wordt atm
+
+* DONE --> MOET TESTEN na feature berekening uitzetten
+
+============= EXPERIMENTEN =================
+
+*** test run van alles met discrete runnen
+    * huh netwerk 16 0 samples???
+
+
+ ---- VAN APPJES ELISE ----
+ We willen vergelijken: 
+    feature set 1 en feature set 2b
+    Want dat zijn de static en de temporal 
+    zonder past event aggregation
