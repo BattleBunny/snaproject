@@ -28,22 +28,22 @@ def predict(directory: str,
             clf='LogisticRegression',
             random_state=42,
             n_jobs=-1):
-    if feature_set == 'I': #static feature set
+    if feature_set == 'I':  # static feature set
         def check(x): return x in [
             'aa.npy', 'cn.npy', 'jc.npy', 'pa.npy', 'sp.npy']
-    elif feature_set == 'II-A': #temporal features WITH past event aggregation
+    elif feature_set == 'II-A':  # temporal features WITH past event aggregation
         def check(x): return not x.startswith('na')
-    elif feature_set == 'II-B': #temporal features WIHTOUT past even aggregation
+    elif feature_set == 'II-B':  # temporal features WIHTOUT past even aggregation
         def check(x): return (
             (x in ['aa.npy', 'cn.npy', 'jc.npy',
-             'pa.npy', 'sp.npy'] or ('_q100' in x))
+                   'pa.npy', 'sp.npy'] or ('_q100' in x))
             and not x.startswith('na')
         )
-    elif feature_set == 'III-A': #node activity features WITH past event aggregation
+    elif feature_set == 'III-A':  # node activity features WITH past event aggregation
         def check(x): return (
             x.startswith('na') and not 'm5' in x
         )
-    elif feature_set == 'III-B': #node activity features WITHOUT past event aggregation
+    elif feature_set == 'III-B':  # node activity features WITHOUT past event aggregation
         def check(x): return (
             (x.startswith('na') and not 'm5' in x) or (x.startswith('na') and (not 'm5' in x) and ('_q100' in x)))
     else:
@@ -111,7 +111,7 @@ def single_all_features(network: int,
                         clf: str = 'LogisticRegression',
                         random_state: int = 42,
                         n_jobs: int = -1):
-    feature_sets = ["I", "II-A", "II-B"]
+    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B"]
     for f in feature_sets:
         single(network=network, feature_set=f)
 
