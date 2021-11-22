@@ -47,7 +47,7 @@ def predict(directory: str,
         def check(x): return (
             (x.startswith('na') and not 'm5' in x) or (x.startswith('na') and (not 'm5' in x) and ('_q100' in x)))
     else:
-        raise Exception(f'{feature_set=} not recognized')
+        raise Exception(f'{feature_set} not recognized')
 
     assert os.path.isdir(directory), f'missing {directory=}'
     feature_dir = os.path.join(directory, 'features')
@@ -58,9 +58,11 @@ def predict(directory: str,
     assert os.path.isfile(samples_filepath), f'missing {samples_filepath=}'
 
     X = pd.DataFrame({
-        f.name: np.load(f.path)
+        f.name: np.load(f.path) 
         for f in os.scandir(feature_dir) if check(f.name)
     })
+    
+    y = pd.read_pickle(samples_filepath).astype(int).values
 
     X_train, X_test, y_train, y_test = (
         sklearn.model_selection.train_test_split(X, y, random_state=random_state))
@@ -94,7 +96,7 @@ def predict(directory: str,
 
 
 @app.command()
-def discrete(feature_set: List[str] = ["I", "II-A", "II-B"]):
+def discrete(feature_set: List[str] = ["I", "II-A", "II-B","III-A", "III-B"]):
     """"Get all features of all discrete networks """
     discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
     for i in discrete_ids:
