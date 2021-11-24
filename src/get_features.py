@@ -419,30 +419,30 @@ def single(path: str, n_jobs: int = -1, verbose=True):
         for func_str, func in simple_funcs
     )
 
-    # # NA
-    # total = (len(TIME_STRATEGIES) *
-    #          len(AGGREGATION_STRATEGIES) *
-    #          len(NODEPAIR_STRATEGIES))
-    # ProgressParallel(use_tqdm=verbose,
-    #                  total=total,
-    #                  desc='na features',
-    #                  leave=True,
-    #                  n_jobs=total if total < n_jobs else n_jobs)(
-    #     delayed(calculate_feature)(
-    #         function=na,
-    #         out_filepath=os.path.join(
-    #             features_dir,
-    #             f'na_{time_str}_{agg_str}_{nodepair_str}'
-    #         ),
-    #         edgelist_mature=edgelist_mature, instances=instances,
-    #         time_strategy=time_func,
-    #         aggregation_strategy=agg_func,
-    #         nodepair_strategy=nodepair_func
-    #     )
-    #     for time_str, time_func in TIME_STRATEGIES.items()
-    #     for agg_str, agg_func in AGGREGATION_STRATEGIES.items()
-    #     for nodepair_str, nodepair_func in NODEPAIR_STRATEGIES.items()
-    # )
+    # NA
+    total = (len(TIME_STRATEGIES) *
+             len(AGGREGATION_STRATEGIES) *
+             len(NODEPAIR_STRATEGIES))
+    ProgressParallel(use_tqdm=verbose,
+                     total=total,
+                     desc='na features',
+                     leave=True,
+                     n_jobs=total if total < n_jobs else n_jobs)(
+        delayed(calculate_feature)(
+            function=na,
+            out_filepath=os.path.join(
+                features_dir,
+                f'na_{time_str}_{agg_str}_{nodepair_str}'
+            ),
+            edgelist_mature=edgelist_mature, instances=instances,
+            time_strategy=time_func,
+            aggregation_strategy=agg_func,
+            nodepair_strategy=nodepair_func
+        )
+        for time_str, time_func in TIME_STRATEGIES.items()
+        for agg_str, agg_func in AGGREGATION_STRATEGIES.items()
+        for nodepair_str, nodepair_func in NODEPAIR_STRATEGIES.items()
+    )
 
     # Time aware functions
     time_aware_funcs = [('aa', aa_time_aware),
