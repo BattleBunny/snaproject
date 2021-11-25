@@ -30,22 +30,22 @@ def predict(directory: str,
             n_jobs=-1):
     if feature_set == 'I':  # static feature set
         def check(x): return x in [
-            'aa.npy', 'cn.npy', 'jc.npy', 'pa.npy', 'sp.npy']
+            'aa.npy', 'cn.npy', 'jc.npy', 'pa.npy']
     elif feature_set == 'II-A':  # temporal features WITH past event aggregation
         def check(x): return not x.startswith('na')
     elif feature_set == 'II-B':  # temporal features WIHTOUT past even aggregation
         def check(x): return (
             (x in ['aa.npy', 'cn.npy', 'jc.npy',
-                   'pa.npy', 'sp.npy'] or ('_q100' in x))
+                   'pa.npy'] or ('_q100' in x))
             and not x.startswith('na')
         )
     elif feature_set == 'III-A':  # node activity features WITH past event aggregation
         def check(x): return (
-            x.startswith('na') and not 'm5' in x
+            x.startswith('na')
         )
     elif feature_set == 'III-B':  # node activity features WITHOUT past event aggregation
         def check(x): return (
-            (x.startswith('na') and not 'm5' in x) or (x.startswith('na') and (not 'm5' in x) and ('_q100' in x)))
+            (x.startswith('na') and ('_q100' in x)))
     else:
         raise Exception(f'{feature_set} not recognized')
 
@@ -58,10 +58,15 @@ def predict(directory: str,
     assert os.path.isfile(samples_filepath), f'missing {samples_filepath=}'
 
     X = pd.DataFrame({
-        f.name: np.load(f.path) 
+        f.name: np.load(f.path)
         for f in os.scandir(feature_dir) if check(f.name)
     })
-    
+
+    # print(f"Featureset: {feature_set}")
+    # for f in os.scandir(feature_dir):
+    #     if check(f.name):
+    #         print(f.name)
+    # return
     y = pd.read_pickle(samples_filepath).astype(int).values
 
     X_train, X_test, y_train, y_test = (
@@ -96,7 +101,7 @@ def predict(directory: str,
 
 
 @app.command()
-def discrete(feature_set: List[str] = ["I", "II-A", "II-B","III-A", "III-B"]):
+def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B"]):
     """"Get all features of all discrete networks """
     discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
     for i in discrete_ids:

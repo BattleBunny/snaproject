@@ -52,16 +52,26 @@ def sqrt(x: pd.Series, lower_bound=.2):
 TIME_STRATEGIES = {'lin': lin, 'exp': exp, 'sqrt': sqrt}
 
 AGGREGATION_STRATEGIES = {
-    'q0': np.min,
+    'q0': np.min,  # zeroth quantile?
     'q25': lambda array: np.quantile(array, .25),
-    'q50': np.median,
+    'q50': np.median,  # 2nd quantile
     'q75': lambda array: np.quantile(array, .75),
-    'q100': np.max,
+    'q100': np.max,  # no aggregation
     'm0': np.sum,
     'm1': np.mean,
     'm2': np.var,
-    'm3': scipy.stats.skew,
-    'm4': scipy.stats.kurtosis
+    # 'm3': scipy.stats.skew,
+    # 'm4': scipy.stats.kurtosis
+}
+
+NODE_AGGREGATION_STRATEGIES = {
+    'q0': np.min,  # zeroth quantile?
+    'q25': lambda array: np.quantile(array, .25),
+    'q50': np.median,  # 2nd quantile
+    'q75': lambda array: np.quantile(array, .75),
+    'q100': np.max,  # no aggregation
+    'm0': np.sum,
+    'm1': np.mean,
 }
 
 NODEPAIR_STRATEGIES = {
@@ -265,7 +275,7 @@ def all(network: int = None,
 
     # na
     if include_na:
-        total = (len(paths)*len(TIME_STRATEGIES)*len(AGGREGATION_STRATEGIES) *
+        total = (len(paths)*len(TIME_STRATEGIES)*len(NODE_AGGREGATION_STRATEGIES) *
                  len(NODEPAIR_STRATEGIES))
         ProgressParallel(n_jobs=n_jobs, total=total, desc='na')(
             delayed(calculate_feature)(
@@ -277,17 +287,17 @@ def all(network: int = None,
                 nodepair_strategy=nodepair_func
             )
             for time_str, time_func in TIME_STRATEGIES.items()
-            for agg_str, agg_func in AGGREGATION_STRATEGIES.items()
+            for agg_str, agg_func in NODE_AGGREGATION_STRATEGIES.items()
             for nodepair_str, nodepair_func in NODEPAIR_STRATEGIES.items()
             for path in paths
         )
 
-    # sp
-    ProgressParallel(n_jobs=len(paths), total=len(paths), desc='sp')(
-        delayed(calculate_feature)(
-            feature_func=sp, path=path, out_file='sp.npy')
-        for path in paths
-    )
+    # # sp
+    # ProgressParallel(n_jobs=len(paths), total=len(paths), desc='sp')(
+    #     delayed(calculate_feature)(
+    #         feature_func=sp, path=path, out_file='sp.npy')
+    #     for path in paths
+    # )
 
     # jc
     ProgressParallel(n_jobs=len(paths), total=len(paths), desc='jc')(
@@ -403,7 +413,9 @@ def single(path: str, n_jobs: int = -1, verbose=True):
     instances = np.array([i for i in pd.read_pickle(samples_file).index])
 
     # Simple features
-    simple_funcs = [('aa', aa), ('sp', sp), ('jc', jc), ('cn', cn), ('pa', pa)]
+    # simple_funcs = [('aa', aa), ('sp', sp), ('jc', jc), ('cn', cn), ('pa', pa)]
+    simple_funcs = [('aa', aa), ('jc', jc), ('cn', cn), ('pa', pa)]
+
     total = len(simple_funcs)
     ProgressParallel(use_tqdm=verbose,
                      total=total,
@@ -421,7 +433,7 @@ def single(path: str, n_jobs: int = -1, verbose=True):
 
     # NA
     total = (len(TIME_STRATEGIES) *
-             len(AGGREGATION_STRATEGIES) *
+             len(NODE_AGGREGATION_STRATEGIES) *
              len(NODEPAIR_STRATEGIES))
     ProgressParallel(use_tqdm=verbose,
                      total=total,
@@ -440,7 +452,7 @@ def single(path: str, n_jobs: int = -1, verbose=True):
             nodepair_strategy=nodepair_func
         )
         for time_str, time_func in TIME_STRATEGIES.items()
-        for agg_str, agg_func in AGGREGATION_STRATEGIES.items()
+        for agg_str, agg_func in NODE_AGGREGATION_STRATEGIES.items()
         for nodepair_str, nodepair_func in NODEPAIR_STRATEGIES.items()
     )
 

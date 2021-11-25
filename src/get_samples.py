@@ -125,6 +125,7 @@ def single(network: int,
 
     result.to_pickle(filepath_out)
 
+
 @app.command()
 def discrete():
     """"Get samples for all discrete networks """

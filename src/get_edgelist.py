@@ -367,6 +367,9 @@ def single(index_network: int,
     else:
         raise Exception(f'Invalid {index_network=}')
 
+    if index_network == 16:
+        t_min = pd.Timestamp(
+            2001, 1, 10)
     edgelist = add_phase(edgelist, split_fraction, t_min, t_split, t_max)
 
     edgelist.to_pickle(edgelist_path)
@@ -378,7 +381,8 @@ def discrete():
     discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
     for i in discrete_ids:
         try:
-            single(index_network=i)
+            single(index_network=i, t_min=pd.Timestamp(
+                2001, 1, 10) if i == 16 else None)
         except:
             logger.debug(f"COULD NOT EXTRACT NETWORK ID {i}")
 
