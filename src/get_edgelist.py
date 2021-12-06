@@ -104,7 +104,6 @@ def from_konect(url: str, *, temp_path: str) -> pd.DataFrame:
         out_location, delim_whitespace=True, engine='python', comment='%',
         names=['source', 'target', 'weight', 'datetime'])
     edgelist = edgelist[edgelist['datetime'] != 0]
-
     # Check for signed network
     if -1 in edgelist['weight'].unique():
         print("This is likely a signed network (weight equals -1).\n"
@@ -298,8 +297,11 @@ def single(index_network: int,
     """
     # discrete event indices, size ascending
     # 18, 20, 21, 9, 4,8, 24,16, 11,10
+    print("hello")
+    print(f"/data/s1620444/{index_network:02}")
     os.makedirs(os.path.dirname(
-        f"/data/s1620444/{index_network:02}"), exist_ok=True)
+        f"../data/s1620444/{index_network:02}"), exist_ok=True)
+    print("made directories")
     konect_urls = {
         1: 'http://konect.cc/files/download.tsv.dblp_coauthor.tar.bz2',
         2: 'http://konect.cc/files/download.tsv.ca-cit-HepPh.tar.bz2',
@@ -329,13 +331,13 @@ def single(index_network: int,
     }
 
     # Check if file already exists
-    edgelist_path = f'/data/s1620444/{index_network:02}/edgelist.pkl'
+    edgelist_path = f'../data/s1620444/{index_network:02}/edgelist.pkl'
     if os.path.isfile(edgelist_path):
         logger.debug(f'{edgelist_path} already exists')
         return
 
     # # Make temp_path if not yet exists
-    temp_path = f'/data/s1620444/{index_network:02}'
+    temp_path = f'../data/s1620444/{index_network:02}'
     os.makedirs(temp_path, exist_ok=True)
 
     # Download and extract edgelist
@@ -371,7 +373,7 @@ def single(index_network: int,
         t_min = pd.Timestamp(
             2001, 1, 10)
     edgelist = add_phase(edgelist, split_fraction, t_min, t_split, t_max)
-
+    print("final!",index_network,edgelist.shape)
     edgelist.to_pickle(edgelist_path)
 
 
@@ -394,7 +396,7 @@ def all():
         if index_network != 5:
             single(
                 index_network,
-                edgelist_path=f'/data/s1620444/{index_network:02}/edgelist.pkl',
+                edgelist_path=f'../data/s1620444/{index_network:02}/edgelist.pkl',
                 t_min=pd.Timestamp(
                     2001, 1, 10) if index_network == 16 else None
             )
