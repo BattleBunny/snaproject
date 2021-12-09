@@ -142,8 +142,10 @@ def single(network: int,
                                 'properties',
                                 f'{feature_set}_{clf}.float')
     if os.path.isfile(filepath_out):
+        print("this is a file")
         return
     auc = predict(directory, feature_set, clf, random_state, n_jobs)
+    print(auc)
     if auc is not None:
         with open(filepath_out, 'w') as file:
             file.write(str(auc))
