@@ -105,7 +105,7 @@ def predict(directory: str,
 
 
 @app.command()
-def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B"]):
+def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B","I+II-A+III-A"]):
     """"Get all features of all discrete networks """
     discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
     for i in discrete_ids:
@@ -122,8 +122,9 @@ def single_all_features(network: int,
                         clf: str = 'LogisticRegression',
                         random_state: int = 42,
                         n_jobs: int = -1):
-    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B"]
+    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B","I+II-A+III-A"]
     for f in feature_sets:
+        print(f)
         single(network=network, feature_set=f)
 
 
@@ -135,12 +136,16 @@ def single(network: int,
            n_jobs: int = -1):
     directory = f'/data/s1620444/{network:02}'
     os.makedirs(directory, exist_ok=True)
-    filepath_out = os.path.join(directory,
+    directory_out = f'/data/s3021637/{network:02}'
+    os.makedirs(directory_out, exist_ok=True)
+    filepath_out = os.path.join(directory_out,
                                 'properties',
                                 f'{feature_set}_{clf}.float')
     if os.path.isfile(filepath_out):
+        print("this is a file")
         return
     auc = predict(directory, feature_set, clf, random_state, n_jobs)
+    print(auc)
     if auc is not None:
         with open(filepath_out, 'w') as file:
             file.write(str(auc))

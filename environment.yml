@@ -1,4 +1,4 @@
-name: base
+name: SNA
 channels:
   - conda-forge
 dependencies:
