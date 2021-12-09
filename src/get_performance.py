@@ -101,29 +101,6 @@ def predict(directory: str,
 
 
 @app.command()
-def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B"]):
-    """"Get all features of all discrete networks """
-    discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
-    for i in discrete_ids:
-        for f in feature_set:
-            try:
-                single(network=i, feature_set=f)
-            except:
-                print(
-                    f"COULD NOT EXTRACT FEATURES NETWORK ID {i}, FEATURES {f}")
-
-
-@app.command()
-def single_all_features(network: int,
-                        clf: str = 'LogisticRegression',
-                        random_state: int = 42,
-                        n_jobs: int = -1):
-    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B"]
-    for f in feature_sets:
-        single(network=network, feature_set=f)
-
-
-@app.command()
 def single(network: int,
            clf: str = 'LogisticRegression',
            feature_set: str = 'II-A',
@@ -140,6 +117,27 @@ def single(network: int,
     if auc is not None:
         with open(filepath_out, 'w') as file:
             file.write(str(auc))
+
+@app.command()
+def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B"]):
+    """"Get all features of all discrete networks """
+    discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
+    for i in discrete_ids:
+        for f in feature_set:
+            try:
+                single(network=i, feature_set=f)
+            except:
+                print(
+                    f"COULD NOT EXTRACT FEATURES NETWORK ID {i}, FEATURES {f}")
+
+@app.command()
+def single_all_features(network: int,
+                        clf: str = 'LogisticRegression',
+                        random_state: int = 42,
+                        n_jobs: int = -1):
+    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B"]
+    for f in feature_sets:
+        single(network=network, feature_set=f)
 
 
 @app.command()
