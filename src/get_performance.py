@@ -46,6 +46,10 @@ def predict(directory: str,
     elif feature_set == 'III-B':  # node activity features WITHOUT past event aggregation
         def check(x): return (
             (x.startswith('na') and ('_q100' in x)))
+    elif feature_set == 'I+II-A+III-A': # all three WITH past event aggregation (IIA fig6)
+        def check(x): return (
+             (x.startswith('na')) or (x in [
+            'aa.npy', 'cn.npy', 'jc.npy', 'pa.npy']) or (not x.startswith('na')))
     else:
         raise Exception(f'{feature_set} not recognized')
 
@@ -62,10 +66,10 @@ def predict(directory: str,
         for f in os.scandir(feature_dir) if check(f.name)
     })
 
-    # print(f"Featureset: {feature_set}")
-    # for f in os.scandir(feature_dir):
-    #     if check(f.name):
-    #         print(f.name)
+    print(f"Featureset: {feature_set}")
+    for f in os.scandir(feature_dir):
+        if check(f.name):
+            print(f.name)
     # return
     y = pd.read_pickle(samples_filepath).astype(int).values
 
