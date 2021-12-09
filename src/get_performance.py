@@ -124,6 +124,7 @@ def single_all_features(network: int,
                         n_jobs: int = -1):
     feature_sets = ["I", "II-A", "II-B", "III-A", "III-B","I+II-A+III-A"]
     for f in feature_sets:
+        print(f)
         single(network=network, feature_set=f)
 
 
@@ -133,7 +134,7 @@ def single(network: int,
            feature_set: str = 'II-A',
            random_state: int = 42,
            n_jobs: int = -1):
-    directory = f'/data/s1620444/{network:02}'
+    directory = f'/data/s3021637/{network:02}'
     os.makedirs(directory, exist_ok=True)
     filepath_out = os.path.join(directory,
                                 'properties',
