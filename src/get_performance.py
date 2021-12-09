@@ -122,7 +122,7 @@ def single_all_features(network: int,
                         clf: str = 'LogisticRegression',
                         random_state: int = 42,
                         n_jobs: int = -1):
-    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B"]
+    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B","I+II-A+III-A"]
     for f in feature_sets:
         single(network=network, feature_set=f)
 
