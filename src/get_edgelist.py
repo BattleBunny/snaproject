@@ -300,7 +300,7 @@ def single(index_network: int,
     print("hello")
     print(f"/data/s1620444/{index_network:02}")
     os.makedirs(os.path.dirname(
-        f"../data/s1620444/{index_network:02}"), exist_ok=True)
+        f"/data/s1620444/{index_network:02}"), exist_ok=True)
     print("made directories")
     konect_urls = {
         1: 'http://konect.cc/files/download.tsv.dblp_coauthor.tar.bz2',
@@ -331,13 +331,13 @@ def single(index_network: int,
     }
 
     # Check if file already exists
-    edgelist_path = f'../data/s1620444/{index_network:02}/edgelist.pkl'
+    edgelist_path = f'/data/s1620444/{index_network:02}/edgelist.pkl'
     if os.path.isfile(edgelist_path):
         logger.debug(f'{edgelist_path} already exists')
         return
 
     # # Make temp_path if not yet exists
-    temp_path = f'../data/s1620444/{index_network:02}'
+    temp_path = f'/data/s1620444/{index_network:02}'
     os.makedirs(temp_path, exist_ok=True)
 
     # Download and extract edgelist
@@ -396,7 +396,7 @@ def all():
         if index_network != 5:
             single(
                 index_network,
-                edgelist_path=f'../data/s1620444/{index_network:02}/edgelist.pkl',
+                edgelist_path=f'/data/s1620444/{index_network:02}/edgelist.pkl',
                 t_min=pd.Timestamp(
                     2001, 1, 10) if index_network == 16 else None
             )
