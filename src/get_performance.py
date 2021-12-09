@@ -136,7 +136,7 @@ def single(network: int,
            n_jobs: int = -1):
     directory = f'/data/s1620444/{network:02}'
     os.makedirs(directory, exist_ok=True)
-    directory_out = f'/data/s3021637/{network:02}/properties'
+    directory_out = f'/data/s3021637/{network:02}'
     os.makedirs(directory_out, exist_ok=True)
     filepath_out = os.path.join(directory_out,
                                 'properties',
