@@ -105,7 +105,7 @@ def predict(directory: str,
 
 
 @app.command()
-def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B"]):
+def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B","I+II-A+III-A"]):
     """"Get all features of all discrete networks """
     discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
     for i in discrete_ids:
