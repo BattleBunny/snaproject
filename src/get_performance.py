@@ -46,10 +46,11 @@ def predict(directory: str,
     elif feature_set == 'III-B':  # node activity features WITHOUT past event aggregation
         def check(x): return (
             (x.startswith('na') and ('_q100' in x)))
-    elif feature_set == 'I+II-A+III-A': # all three WITH past event aggregation (IIA fig6)
+    # all three WITH past event aggregation (IIA fig6)
+    elif feature_set == 'I+II-A+III-A':
         def check(x): return (
-             (x.startswith('na')) or (x in [
-            'aa.npy', 'cn.npy', 'jc.npy', 'pa.npy']) or (not x.startswith('na')))
+            (x.startswith('na')) or (x in [
+                'aa.npy', 'cn.npy', 'jc.npy', 'pa.npy']) or (not x.startswith('na')))
     else:
         raise Exception(f'{feature_set} not recognized')
 
@@ -105,7 +106,7 @@ def predict(directory: str,
 
 
 @app.command()
-def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B","I+II-A+III-A"]):
+def discrete(feature_set: List[str] = ["I", "II-A", "II-B", "III-A", "III-B", "I+II-A+III-A"]):
     """"Get all features of all discrete networks """
     discrete_ids = [18, 20, 21, 9, 4, 8, 24, 16, 11, 10]
     for i in discrete_ids:
@@ -122,7 +123,7 @@ def single_all_features(network: int,
                         clf: str = 'LogisticRegression',
                         random_state: int = 42,
                         n_jobs: int = -1):
-    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B","I+II-A+III-A"]
+    feature_sets = ["I", "II-A", "II-B", "III-A", "III-B", "I+II-A+III-A"]
     for f in feature_sets:
         print(f)
         single(network=network, feature_set=f)
