@@ -137,7 +137,7 @@ def single(network: int,
            n_jobs: int = -1):
     directory = f'/data/s1620444/{network:02}'
     os.makedirs(directory, exist_ok=True)
-    directory_out = f'/data/s3021637/{network:02}'
+    directory_out = f'/data/s1620444/{network:02}'
     os.makedirs(directory_out, exist_ok=True)
     filepath_out = os.path.join(directory_out,
                                 'properties',
@@ -170,12 +170,12 @@ def all(network: int = None,
         random.shuffle(networks)
     if n_jobs == -1 or n_jobs > 1:
         ProgressParallel(n_jobs=n_jobs, total=len(networks))(
-            delayed(single)(network, clf, feature_set)
+            delayed(single_all_features)(network, clf, feature_set)
             for network in networks
         )
     else:
         for network in tqdm(networks):
-            single(network, clf, feature_set)
+            single_all_features(network, clf, feature_set)
 
 
 if __name__ == '__main__':

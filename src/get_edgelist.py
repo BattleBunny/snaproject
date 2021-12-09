@@ -373,7 +373,7 @@ def single(index_network: int,
         t_min = pd.Timestamp(
             2001, 1, 10)
     edgelist = add_phase(edgelist, split_fraction, t_min, t_split, t_max)
-    print("final!",index_network,edgelist.shape)
+    print("final!", index_network, edgelist.shape)
     edgelist.to_pickle(edgelist_path)
 
 
@@ -396,7 +396,6 @@ def all():
         if index_network != 5:
             single(
                 index_network,
-                edgelist_path=f'/data/s1620444/{index_network:02}/edgelist.pkl',
                 t_min=pd.Timestamp(
                     2001, 1, 10) if index_network == 16 else None
             )
