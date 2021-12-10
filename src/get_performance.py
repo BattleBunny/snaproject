@@ -67,7 +67,6 @@ def predict(directory: str,
         for f in os.scandir(feature_dir) if check(f.name)
     })
 
-    print(f"Featureset: {feature_set}")
     for f in os.scandir(feature_dir):
         if check(f.name):
             print(f.name)
@@ -125,7 +124,7 @@ def single_all_features(network: int,
                         n_jobs: int = -1):
     feature_sets = ["I", "II-A", "II-B", "III-A", "III-B", "I+II-A+III-A"]
     for f in feature_sets:
-        print(f)
+        print(f'network {network}, feature {f}')
         single(network=network, feature_set=f)
 
 
