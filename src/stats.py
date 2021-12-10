@@ -187,7 +187,7 @@ def all(network: int = None,
     if network is None:
         networks = [network
                     for network in np.arange(1, 31)
-                    if network not in [15, 17, 26, 27]]
+                    if network not in [5, 15, 17, 26, 27]]
     else:
         networks = [network]
 

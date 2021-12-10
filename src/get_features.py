@@ -265,7 +265,7 @@ def all(network: int = None,
         networks = [network]
     paths = [
         f'/data/s1620444/{network:02}/'
-        for network in networks
+        for network in networks if network != 5
     ]
 
     # aa

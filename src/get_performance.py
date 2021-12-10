@@ -137,10 +137,9 @@ def single(network: int,
            n_jobs: int = -1):
     directory = f'/data/s1620444/{network:02}'
     os.makedirs(directory, exist_ok=True)
-    directory_out = f'/data/s1620444/{network:02}'
+    directory_out = f'/data/s1620444/{network:02}/properties'
     os.makedirs(directory_out, exist_ok=True)
     filepath_out = os.path.join(directory_out,
-                                'properties',
                                 f'{feature_set}_{clf}.float')
     if os.path.isfile(filepath_out):
         print("this is a file")
@@ -162,7 +161,7 @@ def all(network: int = None,
         seed: int = 42):
     if network is None:
         networks = [network for network in np.arange(1, 31)
-                    if network not in [15, 17, 26, 27]]
+                    if network not in [5, 15, 17, 26, 27]]
     else:
         networks = [network]
     if shuffle:

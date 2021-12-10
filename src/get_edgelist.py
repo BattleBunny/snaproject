@@ -363,8 +363,6 @@ def single(index_network: int,
             url='https://snap.stanford.edu/data/soc-redditHyperlinks-title.tsv',
             temp_path=temp_path
         )
-    elif index_network == 5:
-        edgelist = pd.read_pickle(edgelist_path)
 
     else:
         raise Exception(f'Invalid {index_network=}')

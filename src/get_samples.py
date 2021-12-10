@@ -143,7 +143,7 @@ def all(n_jobs: int = -1,
         shuffle: bool = True,
         seed: int = 42,
         sample_size: int = 10_000):
-    iterations = np.arange(1, 31)
+    iterations = [i for i in range(1, 31) if i != 5]
     if shuffle:
         random.seed(seed)
         random.shuffle(iterations)
